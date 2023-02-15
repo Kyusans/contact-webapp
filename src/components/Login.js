@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { Container, Form, FloatingLabel, Card, Button } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigateTo = useNavigate();
+
 
     return ( 
         <>
@@ -39,7 +43,7 @@ const Login = () => {
 
                             <Button className="btn-success button-large">Login</Button>
                         </Form>
-                        <p className="mt-3 text-center">Don't have an account?<button className="link-button">Sign Up</button> </p>
+                        <p className="mt-3 text-center">Don't have an account?<button className="link-button" onClick={() => navigateTo("/signup")}>Sign Up</button> </p>
 
                     </Card.Body>
                 </Card>
