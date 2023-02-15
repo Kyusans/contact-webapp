@@ -1,0 +1,33 @@
+.site-body {
+    color: white;
+    background-color: #292929;
+}
+
+.card-thin{
+    width: 350px !important;
+    margin: 0 auto;
+}
+
+.fatter-text {
+    font-weight: 500;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.button-large {
+    width: 315px !important;
+    height: 45px
+}
+
+.link-button {
+    background-color: transparent;
+    border: none;
+    color: #10a481;
+    text-decoration: underline;
+    cursor: pointer;
+}
