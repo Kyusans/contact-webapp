@@ -16,7 +16,7 @@ const AlertScript = (props) => {
 
   return (
     <>
-      <Alert variant={variant} show={handleShow} onClose={handleCloseAlert}>
+      <Alert variant={variant} show={handleShow} onClose={handleCloseAlert} className="text-center">
         {message}
       </Alert>
     </>
@@ -25,16 +25,16 @@ const AlertScript = (props) => {
 
 export default AlertScript;
 
-//   //for alert
-//   const [showAlert, setShowAlert] = useState(false);
-//   const [alertVariant, setAlertVariant] = useState("");
-//   const [alertMessage, setAlertMessage] = useState("");
+// 	//for alert
+// 	const [showAlert, setShowAlert] = useState(false);
+// 	const [alertVariant, setAlertVariant] = useState("");
+// 	const [alertMessage, setAlertMessage] = useState("");
 
 
-// function getAlert(variantAlert, messageAlert){
-//     setShowAlert(true);
-//     setAlertVariant(variantAlert);
-//     setAlertMessage(messageAlert);
-//   }
+// 	function getAlert(variantAlert, messageAlert){
+// 		setShowAlert(true);
+// 		setAlertVariant(variantAlert);
+// 		setAlertMessage(messageAlert);
+// 	}
 
 // <AlertScript show={showAlert} variant={alertVariant} message={alertMessage} />
