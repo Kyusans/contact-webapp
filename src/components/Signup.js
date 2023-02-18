@@ -99,10 +99,19 @@ const Signup = () => {
 
         }else{
             const duplicateUser = users.find(user => user.user_username === username);
-            if (duplicateUser) {
+            const duplicateEmail = users.find(user => user.user_email === email);
+
+            if(duplicateUser && duplicateEmail){
                 setUsername("");
-                getAlert("danger", "Sorry, this username is already taken. Please choose a different username.")
-            } else {
+                setEmail("");
+                getAlert("danger", "Sorry, this username and email is already taken.")
+            }else if(duplicateUser){
+                setUsername("");
+                getAlert("danger", "Sorry, this username is already taken.");
+            }else if(duplicateEmail){
+                setEmail("");
+                getAlert("danger", "Sorry, this email is already taken.");
+            }else{
                 signup();
             }
 

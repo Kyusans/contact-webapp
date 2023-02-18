@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Container, Form, FloatingLabel, Card, Button } from "react-bootstrap";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import AlertScript from "./AlertScript";
 
 const Login = () => {
@@ -45,7 +45,7 @@ const Login = () => {
             if(res.data !== 0){
                 setShowInvalid(false);
                 getAlert("success", "Success!");
-                setTimeout(() => {navigateTo("/")}, 2000);
+                setTimeout(() => {navigateTo("/", {state:{id: res.data.user_id}})}, 2000);
             }else{
                 setShowInvalid(false);
                 setTimeout(() => {setShowInvalid(true)}, 300)
