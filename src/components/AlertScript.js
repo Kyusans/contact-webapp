@@ -25,6 +25,8 @@ const AlertScript = (props) => {
 
 export default AlertScript;
 
+//import AlertScript from "./AlertScript";
+
 // 	//for alert
 // 	const [showAlert, setShowAlert] = useState(false);
 // 	const [alertVariant, setAlertVariant] = useState("");

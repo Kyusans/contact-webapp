@@ -65,7 +65,6 @@ const Signup = () => {
             getAlert("danger", "Error occured: " + err);
         })
         
-
     }
 
     const getUser = () =>{

@@ -26,6 +26,7 @@ const Login = () => {
 
     const login = () =>{
         const url = "http://localhost/contact/users.php";
+        sessionStorage.setItem("userId", null);
         const jsonData = {
             username: username,
             password: password
@@ -45,6 +46,7 @@ const Login = () => {
             if(res.data !== 0){
                 setShowInvalid(false);
                 getAlert("success", "Success!");
+                sessionStorage.setItem("userId", res.data.user_id);
                 setTimeout(() => {navigateTo("/", {state:{id: res.data.user_id}})}, 2000);
             }else{
                 setShowInvalid(false);
@@ -81,7 +83,7 @@ const Login = () => {
                             <Form.Group className="mt-2 mb-3">
                                 <FloatingLabel label="Password">
                                     <Form.Control
-                                        type='text'
+                                        type='password'
                                         placeholder="Password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}

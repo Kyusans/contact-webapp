@@ -1,25 +1,47 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { Button, Table, Container } from "react-bootstrap";
 import { FaPlus } from 'react-icons/fa';
+import AddContact from "./AddContact";
+import AddGroup from "./AddGroup";
 
 const Home = () => {
-
-	useEffect(() => {
-		if(location.state !== null){
-			getContact();
-		}
-	})
 
 	const [isLoggedin, setIsLoggedIn] = useState(false);
 	const [userId, setUserId] = useState("");
 	const [contact, setContact] = useState([]);
 
-	const location = useLocation();
+	//for modal
+
+	//---------------Add Contact Modal
+	const [showAddContactModal, setAddContactModal] = useState(false);
+	const hideAddContactModal = () =>{
+		setAddContactModal(false);
+	}
+	const openAddContactModal = () =>{
+		setAddContactModal(true);
+	}
+	//---------------//
+
+
+	//---------------Add Group Modal
+	const [showAddGroupModal, setAddGroupModal] = useState(false);
+	const hideAddGroupModal = () =>{
+		setAddGroupModal(false);
+	}
+	const openAddGroupModal = () =>{
+		setAddGroupModal(true);
+	}
+	//---------------//
+
+	useEffect(() => {
+		if(sessionStorage.getItem("userId") !== null){
+			getContact();
+		}
+	})
 
 	const getContact = () =>{
-		setUserId(location.state.id);
+		setUserId(sessionStorage.getItem("userId"));
 		setIsLoggedIn(true);
 		const url = "http://localhost/contact/users.php";
         const jsonData = {
@@ -47,13 +69,15 @@ const Home = () => {
         })
 	}
 
+
 	return ( 
 		<>
 			{
 				!isLoggedin ? <h1 className="mt-3 text-center">You need to login first</h1> :
 				<>
 					<Container className="mt-3" style={{ display: "flex", justifyContent: "flex-end" }}>
-						<Button><FaPlus /> Add contact</Button>
+						<Button onClick={openAddGroupModal} style={{marginRight: "5px"}}><FaPlus /> Add group</Button>
+						<Button onClick={() => openAddContactModal()}><FaPlus /> Add contact</Button>
 					</Container>
 
 					<Container>
@@ -88,6 +112,8 @@ const Home = () => {
 					
 				</>
 			}
+			<AddContact show={showAddContactModal} onHide={hideAddContactModal} />
+			<AddGroup show={showAddGroupModal} onHide={hideAddGroupModal} />
 		</>
 	 );
 }
