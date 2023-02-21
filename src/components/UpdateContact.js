@@ -3,27 +3,25 @@ import { useEffect, useState } from "react";
 import { Container, Form, FloatingLabel, Button, Modal } from "react-bootstrap";
 import AlertScript from "./AlertScript";
 
- 
-const AddContact = (props) => {
-
-    //for form
+const UpdateContact = (props) => {
     const [fullName , setFullName] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
     const [officeNumber, setOfficeNumber] = useState("");
     const [address, setAddress] = useState("");
     const [email, setEmail] = useState("");
-    const [groupId, setGroupId] = useState("");
     const [secondMobileNumber, setSecondMobileNumber] = useState("");
-
-    const [group, setGroup] = useState([]);
     
+    const [contact, setContact] = useState([]);
+    const [group, setGroup] = useState([]);
+
+    const {show, onHide, contactId} = props;
+
     //for validation
     const [validated, setValidated] = useState(false);
 
-    const {show, onHide} = props;
-
     useEffect(() =>{
         getGroup()
+        selectedContact()
     })
 
     const getGroup = () =>{
@@ -56,20 +54,9 @@ const AddContact = (props) => {
         
     }
 
-    //for alert
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertVariant, setAlertVariant] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-
-    function getAlert(variantAlert, messageAlert){
-		setShowAlert(true);
-		setAlertVariant(variantAlert);
-		setAlertMessage(messageAlert);
-	}
-
-    const addContact = () =>{
-        const userId = sessionStorage.getItem("userId");
+    const updateContact = (id) =>{
         const url = "http://localhost/contact/users.php";
+        const groupId = id;
 
         const jsonData = {
             fullName: fullName,
@@ -78,13 +65,12 @@ const AddContact = (props) => {
             address: address,
             email: email,
             groupId: groupId,
-            userId: userId,
             mobileNumber2: secondMobileNumber
         }
 
         const formData = new FormData();
 
-        formData.append("operation", "addContact");
+        formData.append("operation", "updateContact");
         formData.append("json", JSON.stringify(jsonData));
 
         axios({
@@ -106,20 +92,35 @@ const AddContact = (props) => {
         
     }
 
-    const formValidation = (e) =>{
-        const form = e.currentTarget;
+    const selectedContact = () =>{
+		const url = "http://localhost/contact/users.php";
+		const conId = contactId;
 
-        if(form.checkValidity() === false){
-            e.preventDefault();
-            e.stopPropagation();
-        }else{
-            addContact();
-            e.preventDefault();
-            e.stopPropagation();
-        }
+		const jsonData = {
+			contactId: conId
+		}
 
-        setValidated(true);
-    }
+		const formData = new FormData();
+
+		formData.append("operation", "selectContact");
+		formData.append("json", JSON.stringify(jsonData));
+
+		axios({
+			url:url,
+			data: formData,
+			method: "post"
+		})
+
+		.then((res) =>{
+			if(res.data !== 0){
+				setContact(res.data);
+			}
+		})
+
+		.catch((err)=>{
+			getAlert("danger", "Error occured: " + err);
+		})
+	}
 
     const handleOnHide = () =>{
         setValidated(false);
@@ -129,18 +130,40 @@ const AddContact = (props) => {
         setOfficeNumber("");
         setAddress("");
         setEmail("");
-        setGroupId("");
         setSecondMobileNumber("");
         onHide();
     }
 
-    const handleGroupId = (id) =>{
-        setGroupId(id);
+
+    //for alert
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertVariant, setAlertVariant] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+
+    function getAlert(variantAlert, messageAlert){
+        setShowAlert(true);
+        setAlertVariant(variantAlert);
+        setAlertMessage(messageAlert);
     }
-    
-    return (
+
+    const formValidation = (e) =>{
+        const form = e.currentTarget;
+
+        if(form.checkValidity() === false){
+            e.preventDefault();
+            e.stopPropagation();
+        }else{
+            // addContact();
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        setValidated(true);
+    }
+
+    return ( 
         <>
-            <Modal show={show} onHide={onHide}>
+             <Modal show={show} onHide={onHide}>
                 <Modal.Header>
                     <h3 className="mt-4 text-black">Add Contact</h3>  
                 </Modal.Header>
@@ -153,7 +176,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="Full Name"
-                                    value={fullName}
+                                    value={contact.con_fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                     required
                                 />
@@ -168,7 +191,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="Mobile Number"
-                                    value={mobileNumber}
+                                    value={contact.con_mobileNumber}
                                     onChange={(e) => setMobileNumber(e.target.value)}
                                     required
                                 />
@@ -184,7 +207,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="Office Number(Optional)"
-                                    value={officeNumber}
+                                    value={contact.con_officeNumber}
                                     onChange={(e) => setOfficeNumber(e.target.value)}
                                 />
                             </FloatingLabel>
@@ -196,7 +219,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="Address(Optional)"
-                                    value={address}
+                                    value={contact.con_address}
                                     onChange={(e) => setAddress(e.target.value)}
                                 />
                             </FloatingLabel>
@@ -208,7 +231,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="Email(Optional)"
-                                    value={email}
+                                    value={contact.con_email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </FloatingLabel>
@@ -220,7 +243,7 @@ const AddContact = (props) => {
                                 <Form.Control
                                     type='text'
                                     placeholder="2nd Mobile Number(Optional)"
-                                    value={secondMobileNumber}
+                                    value={contact.con_secondMobileNumber}
                                     onChange={(e) => setSecondMobileNumber(e.target.value)}
                                 />
                             </FloatingLabel>
@@ -228,10 +251,10 @@ const AddContact = (props) => {
                         </Form.Group>
 
                         <Form.Select aria-label="Default select example">
-                            <option>Select group(optional)</option>
+                            <option>{group.grp_name}</option>
                             
                             {group.map((groups, index) => (
-                                <option value={groups.grp_id} key={index} onClick={() => handleGroupId(groups.grp_id)}>{groups.grp_name}</option>
+                                <option value={groups.grp_id} key={index} onClick={() => updateContact(groups.grp_id)}>{groups.grp_name}</option>
                             ))}
 
                         </Form.Select>
@@ -247,4 +270,4 @@ const AddContact = (props) => {
     );
 }
  
-export default AddContact;
+export default UpdateContact;
