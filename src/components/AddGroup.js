@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
-import { Form, FloatingLabel, Button, Modal, Container} from "react-bootstrap";
+import { Form, FloatingLabel, Button, Container, Card} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import AlertScript from "./AlertScript";
 
 const AddGroup = (props) => {
     const [validated, setValidated] = useState(false);
     const [name, setName] = useState("");
-
-    const {show, onHide} = props;
+    const navigateTo = useNavigate();
 
     //for alert
 	const [showAlert, setShowAlert] = useState(false);
@@ -44,7 +44,7 @@ const AddGroup = (props) => {
         .then((res) =>{
             if(res.data !== 0){
                 getAlert("success","Successful!");
-                setTimeout(() => {handleOnHide()}, 2000);
+                setTimeout(() => {navigateTo("/")}, 2000);
             }
         })
 
@@ -69,45 +69,40 @@ const AddGroup = (props) => {
         setValidated(true);
     }
 
-    const handleOnHide = () =>{
-        setName("");
-        setValidated(false);
-        setShowAlert(false);
-        onHide();
-    }
-
     return ( 
         <>
-            <Modal className="text-black" show={show} onHide={handleOnHide}>
-                <Modal.Header>
+            <Container fluid="md" className="centered">
+                <Card className="card-thin text-black">
+                    <Card.Body>
                     <h3>Add Group List</h3>
-                </Modal.Header>
-                <Modal.Body>
-                    <AlertScript show={showAlert} variant={alertVariant} message={alertMessage} />
-                    <Form noValidate validated={validated} className="fatter-text" onSubmit={formValidation}>
-                        <Form.Group>
-                            <FloatingLabel label="Group Name">
-                                <Form.Control
-                                    type='text'
-                                    placeholder="Group Name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    This field is required    
-                                </Form.Control.Feedback> 
-                            </FloatingLabel>
-                        </Form.Group>
-                        <hr />
-                        <Container className="text-end">
-                            <Button className="btn-danger" onClick={handleOnHide} style={{marginRight: "5px"}}>Close</Button>
-                            <Button className="btn-success" type="submit">Submit</Button>
-                        </Container>
+                        <AlertScript show={showAlert} variant={alertVariant} message={alertMessage} />
+                        <Form noValidate validated={validated} className="fatter-text" onSubmit={formValidation}>
+                            <Form.Group>
+                                <FloatingLabel label="Group Name">
+                                    <Form.Control
+                                        type='text'
+                                        placeholder="Group Name"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        This field is required    
+                                    </Form.Control.Feedback> 
+                                </FloatingLabel>
+                            </Form.Group>
+                            <hr />
+                            <Container className="text-end">
+                                <Button className="btn-danger" onClick={() => navigateTo("/")} style={{marginRight: "5px"}}>Close</Button>
+                                <Button className="btn-success" type="submit">Submit</Button>
+                            </Container>
 
-                    </Form>
-                </Modal.Body>
-            </Modal>
+                        </Form>
+                    </Card.Body>
+                </Card>
+            </Container>
+
+
 
         </>
      );

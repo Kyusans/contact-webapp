@@ -1,19 +1,18 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Table, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { FaPlus } from 'react-icons/fa';
-import AddContact from "./AddContact";
-import AddGroup from "./AddGroup";
 import AlertScript from "./AlertScript";
-import UpdateContact from "./UpdateContact";
+
 
 const Home = () => {
 
 	const [isLoggedin, setIsLoggedIn] = useState(false);
 	const [userId, setUserId] = useState("");
-	const [contactId, setContactId] = useState("");
 
 	const [contact, setContact] = useState([]);
+	const navigateTo = useNavigate();
 
 	//for alert
 	const [showAlert, setShowAlert] = useState(false);
@@ -26,47 +25,6 @@ const Home = () => {
 		setAlertVariant(variantAlert);
 		setAlertMessage(messageAlert);
 	}
-
-	useEffect(() => {
-		if(sessionStorage.getItem("userId") !== null){
-			getContact();
-		}
-	})
-
-
-	//for modal
-
-	//---------------Add Contact Modal
-	const [showAddContactModal, setAddContactModal] = useState(false);
-	const hideAddContactModal = () =>{
-		setAddContactModal(false);
-	}
-	const openAddContactModal = () =>{
-		setAddContactModal(true);
-	}
-	//---------------//
-
-
-	//---------------Add Group Modal
-	const [showAddGroupModal, setAddGroupModal] = useState(false);
-	const hideAddGroupModal = () =>{
-		setAddGroupModal(false);
-	}
-	const openAddGroupModal = () =>{
-		setAddGroupModal(true);
-	}
-	//---------------//
-
-	//---------------Update contact Modal
-	const [showUpdateModal, setUpdateModal] = useState(false);
-	const hideUpdateModal = () =>{
-		setUpdateModal(false);
-	}
-	const openUpdateModal = (id) =>{
-		setContactId(id);
-		setUpdateModal(true);
-	}
-	//---------------//
 
 	const getContact = () =>{
 		setUserId(sessionStorage.getItem("userId"));
@@ -97,8 +55,14 @@ const Home = () => {
         })
 	}
 
+	useEffect(() => {
+		if(sessionStorage.getItem("userId") !== null){
+			getContact();
+		}
+	})
+
 	const deleteContact = (id) =>{
-       if(window.confirm("Are you sure you wish to delete this?" === true)){
+       if(window.confirm("Are you sure you wish to delete this?")){
 			const url = "http://localhost/contact/users.php";
 			const conId = id;
 			const jsonData = {
@@ -118,6 +82,7 @@ const Home = () => {
 
 			.then((res) =>{
 				if(res.data !== 0){
+					setContact(contact.filter((c) => c.con_id !== id));
 					getAlert("success", "Successfully deleted!");
 					setTimeout(() => {
 						setShowAlert(false);
@@ -132,14 +97,19 @@ const Home = () => {
         
     }
 
+	const handleUpdateButton = (id) =>{
+		console.log("ID: " + id)
+		navigateTo("/updatecontact", {state:{contactId:id}})
+	}
+
 	return ( 
 		<>
 			{
 				!isLoggedin ? <h1 className="mt-3 text-center">You need to login first</h1> :
 				<>
 					<Container className="mt-3" style={{ display: "flex", justifyContent: "flex-end" }}>
-						<Button onClick={openAddGroupModal} style={{marginRight: "5px"}}><FaPlus /> Add group</Button>
-						<Button onClick={openAddContactModal}><FaPlus /> Add contact</Button>
+						<Button style={{marginRight: "5px"}} onClick={() => navigateTo("/addgroup")}><FaPlus /> Add group</Button>
+						<Button onClick={() => navigateTo("/addcontact")}><FaPlus /> Add contact</Button>
 					</Container>
 
 					<Container>
@@ -158,7 +128,7 @@ const Home = () => {
 							</thead>
 
 							<tbody>
-								{contact.map((contacts, index) =>(
+								{ contact && contact.map((contacts, index) =>(
 									<tr key={index}>
 										<td>{contacts.con_fullName}</td>
 										<td>{contacts.con_mobileNumber}</td>
@@ -167,7 +137,7 @@ const Home = () => {
 										<td>{contacts.con_email === "" ? "N/A" : contacts.con_email}</td>
 										<td>{contacts.con_mobileNumber2 === "" ? "N/A" : contacts.con_mobileNumber2}</td>
 										<td className="text-center">
-											<Button className="btn-success"onClick={() => (openUpdateModal(contacts.con_id))}>Update</Button>{" "}
+											<Button className="btn-success" onClick={() => handleUpdateButton(contacts.con_id)}>Update</Button>{" "}
 											<Button className="btn-danger" onClick={() => (deleteContact(contacts.con_id))}>Delete</Button>
 										</td>
 									</tr>
@@ -178,9 +148,6 @@ const Home = () => {
 					
 				</>
 			}
-			<AddContact show={showAddContactModal} onHide={hideAddContactModal} />
-			<AddGroup show={showAddGroupModal} onHide={hideAddGroupModal} />
-			<UpdateContact show={showUpdateModal} onHide={hideUpdateModal} contactId={contactId} />
 		</>
 	 );
 }
